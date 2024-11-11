@@ -3,22 +3,12 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import rehypeSanitize from 'rehype-sanitize'
+import type { Components } from 'react-markdown'
 
 interface ChatMessageProps {
   role: 'user' | 'assistant'
   content: string
   isLoading?: boolean
-}
-
-interface CodeBlockProps {
-  inline?: boolean
-  className?: string
-  children: React.ReactNode
-}
-
-interface ComponentProps {
-  children?: React.ReactNode
-  href?: string
 }
 
 const ChatMessage: FC<ChatMessageProps> = ({ role, content, isLoading }) => {
@@ -43,35 +33,36 @@ const ChatMessage: FC<ChatMessageProps> = ({ role, content, isLoading }) => {
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[rehypeRaw, rehypeSanitize]}
               components={{
-                code: ({ inline, className, children }: CodeBlockProps) => {
+                code: ({ node, inline, className, children, ...props }) => {
+                  const match = /language-(\w+)/.exec(className || '')
                   return !inline ? (
                     <pre className="bg-gray-800 text-gray-100 rounded-lg p-4 overflow-x-auto">
-                      <code className={className}>
+                      <code className={className} {...props}>
                         {children}
                       </code>
                     </pre>
                   ) : (
-                    <code className="bg-gray-100 text-gray-800 px-1 rounded">
+                    <code className="bg-gray-100 text-gray-800 px-1 rounded" {...props}>
                       {children}
                     </code>
                   )
                 },
-                pre: ({ children }: ComponentProps) => {
+                pre: ({ children }) => {
                   return <div className="not-prose">{children}</div>
                 },
-                p: ({ children }: ComponentProps) => {
+                p: ({ children }) => {
                   return <p className="mb-2 last:mb-0">{children}</p>
                 },
-                ul: ({ children }: ComponentProps) => {
+                ul: ({ children }) => {
                   return <ul className="list-disc list-inside mb-2">{children}</ul>
                 },
-                ol: ({ children }: ComponentProps) => {
+                ol: ({ children }) => {
                   return <ol className="list-decimal list-inside mb-2">{children}</ol>
                 },
-                li: ({ children }: ComponentProps) => {
+                li: ({ children }) => {
                   return <li className="mb-1">{children}</li>
                 },
-                a: ({ href, children }: ComponentProps) => {
+                a: ({ href, children }) => {
                   return (
                     <a
                       href={href}
@@ -83,7 +74,7 @@ const ChatMessage: FC<ChatMessageProps> = ({ role, content, isLoading }) => {
                     </a>
                   )
                 }
-              }}
+              } as Components}
             >
               {content}
             </ReactMarkdown>
