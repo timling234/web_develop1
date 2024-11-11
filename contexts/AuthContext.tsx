@@ -1,8 +1,8 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
+import { User, onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
-import { User } from 'firebase/auth'
 
 interface AuthContextType {
   user: User | null
@@ -17,15 +17,22 @@ const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    setMounted(true)
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user)
       setLoading(false)
     })
 
-    return unsubscribe
+    return () => unsubscribe()
   }, [])
+
+  // 在客户端渲染之前不渲染任何内容
+  if (!mounted) {
+    return null
+  }
 
   return (
     <AuthContext.Provider value={{ user, loading }}>
@@ -34,4 +41,4 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
-export const useAuth = () => useContext(AuthContext) 
+export const useAuth = () => useContext(AuthContext)
