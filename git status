@@ -1,0 +1,17 @@
+[33mcommit 656e81eb2293724cd2e7552c835644c1cfcf48bf[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m
+Author: timling234 <lingtim318@gmail.com>
+Date:   Mon Nov 11 00:56:27 2024 -0500
+
+    Fixed vercel deployment error
+
+[33mcommit 67b68f6438258b0bc41cf5e90c8a31bb60e3ac3e[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: lingtim318 <lingtim318@gmail.com>
+Date:   Mon Nov 11 00:41:21 2024 -0500
+
+    Add chat page with GPT3,5
+
+[33mcommit 1ec9e2643f1112a7935ca6c9634d645cc0d72dfd[m
+Author: lingtim318 <lingtim318@gmail.com>
+Date:   Mon Nov 11 00:09:57 2024 -0500
+
+    Initial commit
