@@ -14,11 +14,11 @@ export default function Home() {
         <div>
           <Link 
             href="/chat"
-            className="inline-flex items-center px-8 py-4 bg-blue-600 text-white rounded-full text-lg font-medium hover:bg-blue-700 transition-all transform hover:scale-105 hover:shadow-lg"
+            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-full text-lg font-medium hover:from-blue-700 hover:to-cyan-600 transition-all transform hover:scale-105 hover:shadow-lg"
           >
-            开始对话
+            立即开始
             <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>
           </Link>
           <p className="mt-4 text-sm text-gray-500">
@@ -29,6 +29,7 @@ export default function Home() {
 
       {/* Features Section */}
       <section className="container mx-auto px-4 py-16">
+        <h2 className="text-3xl font-bold text-center mb-12">为什么选择我们？</h2>
         <div className="grid md:grid-cols-3 gap-8">
           <div className="p-8 rounded-2xl bg-white shadow-sm hover:shadow-lg transition-all transform hover:-translate-y-1">
             <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
@@ -62,21 +63,26 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Bottom CTA Section */}
-      <section className="container mx-auto px-4 py-16 text-center">
-        <h2 className="text-3xl font-bold mb-4">准备好开始了吗？</h2>
+      {/* Call to Action Section */}
+      <section className="container mx-auto px-4 py-16 text-center bg-gradient-to-r from-blue-50 to-cyan-50 rounded-3xl my-8 mx-4">
+        <h2 className="text-3xl font-bold mb-4">加入我们的学习社区</h2>
         <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-          立即开始对话，探索 AI 的无限可能
+          创建账户，解锁更多功能
         </p>
-        <Link 
-          href="/chat"
-          className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-full text-lg font-medium hover:from-blue-700 hover:to-cyan-600 transition-all transform hover:scale-105 hover:shadow-lg"
-        >
-          免费体验
-          <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
-        </Link>
+        <div className="flex justify-center space-x-4">
+          <Link 
+            href="/register"
+            className="px-8 py-4 bg-blue-600 text-white rounded-full text-lg font-medium hover:bg-blue-700 transition-all hover:shadow-lg"
+          >
+            免费注册
+          </Link>
+          <Link 
+            href="/chat"
+            className="px-8 py-4 border-2 border-blue-600 text-blue-600 rounded-full text-lg font-medium hover:bg-blue-50 transition-all"
+          >
+            继续体验
+          </Link>
+        </div>
       </section>
     </main>
   )

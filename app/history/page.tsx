@@ -52,7 +52,7 @@ export default function HistoryPage() {
 
   useEffect(() => {
     if (!user) {
-      router.push('/login')
+      setError('请先登录以查看聊天历史')
       return
     }
 

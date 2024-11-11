@@ -30,7 +30,7 @@ function Navbar() {
   }
 
   return (
-    <nav className="bg-white shadow-sm">
+    <nav className="bg-white shadow-sm fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
@@ -38,9 +38,9 @@ function Navbar() {
               <span className="text-xl font-bold text-gray-800">AI 助手</span>
             </Link>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center space-x-4">
             {user ? (
-              <div className="flex items-center space-x-4">
+              <>
                 <Link href="/chat" className="text-gray-700 hover:text-gray-900">
                   聊天
                 </Link>
@@ -53,22 +53,22 @@ function Navbar() {
                 >
                   退出
                 </button>
-              </div>
+              </>
             ) : (
-              <div className="flex items-center space-x-4">
+              <>
                 <Link
                   href="/login"
-                  className="text-gray-700 hover:text-gray-900"
+                  className="text-gray-700 hover:text-gray-900 px-4 py-2"
                 >
                   登录
                 </Link>
                 <Link
                   href="/register"
-                  className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   注册
                 </Link>
-              </div>
+              </>
             )}
           </div>
         </div>
@@ -83,7 +83,7 @@ function RootLayout({ children }: { children: React.ReactNode }) {
       <body className="font-sans">
         <AuthProvider>
           <Navbar />
-          <main>{children}</main>
+          <main className="pt-16">{children}</main>
         </AuthProvider>
       </body>
     </html>

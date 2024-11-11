@@ -29,16 +29,12 @@ const ChatPage: NextPage = () => {
   const [currentSession, setCurrentSession] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // 加载历史对话
+  // 修改加载历史对话的逻辑
   useEffect(() => {
-    if (!user) {
-      router.push('/login')
-      return
-    }
-
-    // 如果URL中有会话ID，加载该会话
+    // 移除强制登录检查
+    // 如果URL中有会话ID，且用户已登录，则加载该会话
     const sessionId = params?.id as string
-    if (sessionId) {
+    if (sessionId && user) {
       loadSession(sessionId)
     }
   }, [user, router, params])
@@ -114,13 +110,14 @@ const ChatPage: NextPage = () => {
   }
 
   const handleSendMessage = async (message: string) => {
-    if (!message.trim() || !user) return
+    if (!message.trim()) return
 
-    // 如果没有当前会话，创建一个新的
-    if (!currentSession) {
+    // 如果用户已登录且没有当前会话，创建一个新的
+    if (user && !currentSession) {
       const sessionId = await createNewSession()
-      if (!sessionId) return
-      setCurrentSession(sessionId)
+      if (sessionId) {
+        setCurrentSession(sessionId)
+      }
     }
 
     const newUserMessage: Message = { 
@@ -161,8 +158,8 @@ const ChatPage: NextPage = () => {
       const updatedMessages = [...newMessages, assistantMessage]
       setMessages(updatedMessages)
 
-      // 保存到 Firestore
-      if (currentSession) {
+      // 只有在用户登录且有当前会话时才保存到 Firestore
+      if (user && currentSession) {
         await updateSession(currentSession, updatedMessages)
       }
     } catch (error: unknown) {
@@ -195,25 +192,33 @@ const ChatPage: NextPage = () => {
           <h1 className="text-xl font-semibold text-gray-800">AI 助手</h1>
         </div>
         <div className="flex items-center space-x-4">
-          <Link
-            href="/history"
-            className="text-gray-600 hover:text-gray-900"
-          >
-            历史记录
-          </Link>
-          <button
-            onClick={async () => {
-              const sessionId = await createNewSession()
-              if (sessionId) {
-                setCurrentSession(sessionId)
-                setMessages([])
-                router.push(`/chat/${sessionId}`)
-              }
-            }}
-            className="px-4 py-2 text-sm text-blue-600 hover:text-blue-700"
-          >
-            新对话
-          </button>
+          {user ? (
+            <>
+              <Link
+                href="/history"
+                className="text-gray-600 hover:text-gray-900"
+              >
+                历史记录
+              </Link>
+              <button
+                onClick={async () => {
+                  const sessionId = await createNewSession()
+                  if (sessionId) {
+                    setCurrentSession(sessionId)
+                    setMessages([])
+                    router.push(`/chat/${sessionId}`)
+                  }
+                }}
+                className="px-4 py-2 text-sm text-blue-600 hover:text-blue-700"
+              >
+                新对话
+              </button>
+            </>
+          ) : (
+            <div className="text-sm text-gray-500">
+              登录后可保存聊天记录
+            </div>
+          )}
         </div>
       </div>
 
@@ -241,7 +246,7 @@ const ChatPage: NextPage = () => {
       {/* Chat input */}
       <div className="border-t border-gray-200 bg-white px-4 py-3">
         <div className="max-w-3xl mx-auto">
-          <ChatInput onSend={handleSendMessage} disabled={loading || !user} />
+          <ChatInput onSend={handleSendMessage} disabled={loading} />
         </div>
       </div>
     </div>
