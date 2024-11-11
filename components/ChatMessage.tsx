@@ -3,13 +3,18 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import rehypeSanitize from 'rehype-sanitize'
-import type { Components } from 'react-markdown'
-import type { CodeComponent } from 'react-markdown/lib/ast-to-react'
 
 interface ChatMessageProps {
   role: 'user' | 'assistant'
   content: string
   isLoading?: boolean
+}
+
+interface MarkdownComponentProps {
+  children?: React.ReactNode
+  href?: string
+  inline?: boolean
+  className?: string
 }
 
 const ChatMessage: FC<ChatMessageProps> = ({ role, content, isLoading }) => {
@@ -34,7 +39,7 @@ const ChatMessage: FC<ChatMessageProps> = ({ role, content, isLoading }) => {
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[rehypeRaw, rehypeSanitize]}
               components={{
-                code: ({ inline, className, children, ...props }: Parameters<CodeComponent>[0]) => {
+                code: ({ inline, className, children, ...props }: MarkdownComponentProps) => {
                   return !inline ? (
                     <pre className="bg-gray-800 text-gray-100 rounded-lg p-4 overflow-x-auto">
                       <code className={className} {...props}>
@@ -47,22 +52,22 @@ const ChatMessage: FC<ChatMessageProps> = ({ role, content, isLoading }) => {
                     </code>
                   )
                 },
-                pre: ({ children }) => {
+                pre: ({ children }: MarkdownComponentProps) => {
                   return <div className="not-prose">{children}</div>
                 },
-                p: ({ children }) => {
+                p: ({ children }: MarkdownComponentProps) => {
                   return <p className="mb-2 last:mb-0">{children}</p>
                 },
-                ul: ({ children }) => {
+                ul: ({ children }: MarkdownComponentProps) => {
                   return <ul className="list-disc list-inside mb-2">{children}</ul>
                 },
-                ol: ({ children }) => {
+                ol: ({ children }: MarkdownComponentProps) => {
                   return <ol className="list-decimal list-inside mb-2">{children}</ol>
                 },
-                li: ({ children }) => {
+                li: ({ children }: MarkdownComponentProps) => {
                   return <li className="mb-1">{children}</li>
                 },
-                a: ({ href, children }) => {
+                a: ({ href, children }: MarkdownComponentProps) => {
                   return (
                     <a
                       href={href}
