@@ -33,8 +33,7 @@ const ChatMessage: FC<ChatMessageProps> = ({ role, content, isLoading }) => {
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[rehypeRaw, rehypeSanitize]}
               components={{
-                code: ({ node, inline, className, children, ...props }) => {
-                  const match = /language-(\w+)/.exec(className || '')
+                code: ({ inline, className, children, ...props }) => {
                   return !inline ? (
                     <pre className="bg-gray-800 text-gray-100 rounded-lg p-4 overflow-x-auto">
                       <code className={className} {...props}>
