@@ -10,6 +10,10 @@ interface Message {
   content: string
 }
 
+interface APIError {
+  message: string
+}
+
 const ChatPage: NextPage = () => {
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(false)
@@ -60,11 +64,12 @@ const ChatPage: NextPage = () => {
         content: data.message
       }
       setMessages([...newMessages, assistantMessage])
-    } catch (error: any) {
-      console.error('Chat error:', error.message)
+    } catch (error: unknown) {
+      const apiError = error as APIError
+      console.error('Chat error:', apiError.message)
       const errorMessage: Message = {
         role: 'assistant',
-        content: `抱歉，发生了一个错误：${error.message}`
+        content: `抱歉，发生了一个错误：${apiError.message}`
       }
       setMessages([...newMessages, errorMessage])
     } finally {

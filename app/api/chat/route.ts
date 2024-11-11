@@ -1,9 +1,22 @@
 import { NextResponse } from 'next/server'
 import OpenAI from 'openai'
 
-type Message = {
+interface Message {
   role: 'user' | 'assistant'
   content: string
+}
+
+interface APIError {
+  response?: {
+    status?: number
+    data?: {
+      error?: {
+        message?: string
+      }
+    }
+  }
+  code?: string
+  message?: string
 }
 
 if (!process.env.OPENAI_API_KEY) {
@@ -42,10 +55,12 @@ export async function POST(req: Request) {
       )
     }
 
-    const isValidMessage = (msg: any): msg is Message => {
+    const isValidMessage = (msg: unknown): msg is Message => {
       return (
         typeof msg === 'object' &&
         msg !== null &&
+        'role' in msg &&
+        'content' in msg &&
         (msg.role === 'user' || msg.role === 'assistant') &&
         typeof msg.content === 'string'
       )
@@ -62,10 +77,7 @@ export async function POST(req: Request) {
     console.log('Sending request to OpenAI:', messages)
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
-      messages: messages.map((msg: Message) => ({
-        role: msg.role,
-        content: msg.content,
-      })),
+      messages: messages,
     })
 
     if (!completion.choices[0].message?.content) {
@@ -77,22 +89,24 @@ export async function POST(req: Request) {
     return NextResponse.json({
       message: completion.choices[0].message.content,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('OpenAI API error:', error)
     
-    if (error.response) {
+    const apiError = error as APIError
+    
+    if (apiError.response) {
       return NextResponse.json(
-        { error: `OpenAI API error: ${error.response.data?.error?.message || 'Unknown error'}` },
-        { status: error.response.status || 500 }
+        { error: `OpenAI API error: ${apiError.response.data?.error?.message || 'Unknown error'}` },
+        { status: apiError.response.status || 500 }
       )
-    } else if (error.code === 'ECONNREFUSED') {
+    } else if (apiError.code === 'ECONNREFUSED') {
       return NextResponse.json(
         { error: 'Failed to connect to OpenAI API' },
         { status: 503 }
       )
     } else {
       return NextResponse.json(
-        { error: error.message || 'Internal server error' },
+        { error: apiError.message || 'Internal server error' },
         { status: 500 }
       )
     }
