@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { auth } from '@/lib/firebase'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, AuthError } from 'firebase/auth'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -17,8 +17,9 @@ export default function RegisterPage() {
     try {
       await createUserWithEmailAndPassword(auth, email, password)
       router.push('/')
-    } catch (error: any) {
-      setError(error.message)
+    } catch (error) {
+      const authError = error as AuthError
+      setError(authError.message)
     }
   }
 
