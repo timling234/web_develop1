@@ -4,6 +4,7 @@ import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import rehypeSanitize from 'rehype-sanitize'
 import type { Components } from 'react-markdown'
+import type { CodeComponent } from 'react-markdown/lib/ast-to-react'
 
 interface ChatMessageProps {
   role: 'user' | 'assistant'
@@ -33,7 +34,7 @@ const ChatMessage: FC<ChatMessageProps> = ({ role, content, isLoading }) => {
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[rehypeRaw, rehypeSanitize]}
               components={{
-                code: ({ inline, className, children, ...props }) => {
+                code: ({ inline, className, children, ...props }: Parameters<CodeComponent>[0]) => {
                   return !inline ? (
                     <pre className="bg-gray-800 text-gray-100 rounded-lg p-4 overflow-x-auto">
                       <code className={className} {...props}>
@@ -73,7 +74,7 @@ const ChatMessage: FC<ChatMessageProps> = ({ role, content, isLoading }) => {
                     </a>
                   )
                 }
-              } as Components}
+              }}
             >
               {content}
             </ReactMarkdown>
