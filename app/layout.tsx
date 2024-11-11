@@ -7,6 +7,7 @@ import { auth } from '@/lib/firebase'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import './globals.css'
+import { useEffect, useState } from 'react'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -23,9 +24,19 @@ const notoSansSC = Noto_Sans_SC({
 function Navbar() {
   const { user } = useAuth()
   const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
   
   // 不在登录和注册页面显示导航栏
   if (pathname === '/login' || pathname === '/register') {
+    return null
+  }
+
+  // 在客户端渲染之前不显示导航栏
+  if (!mounted) {
     return null
   }
 
