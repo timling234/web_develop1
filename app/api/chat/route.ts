@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server'
 import OpenAI from 'openai'
+import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions'
 
 interface Message {
-  role: 'user' | 'assistant'
+  role: 'user' | 'assistant' | 'system'
   content: string
 }
 
@@ -61,7 +62,7 @@ export async function POST(req: Request) {
         msg !== null &&
         'role' in msg &&
         'content' in msg &&
-        (msg.role === 'user' || msg.role === 'assistant') &&
+        (msg.role === 'user' || msg.role === 'assistant' || msg.role === 'system') &&
         typeof msg.content === 'string'
       )
     }
@@ -74,7 +75,7 @@ export async function POST(req: Request) {
       )
     }
 
-    const systemMessage = {
+    const systemMessage: ChatCompletionMessageParam = {
       role: 'system',
       content: `你是一位专业的教育助手，主要面向大学生群体。请遵循以下原则：
       1. 使用清晰、易懂的语言，避免过于晦涩的专业术语
@@ -87,10 +88,18 @@ export async function POST(req: Request) {
       8. 如果涉及编程，提供详细的代码注释和解释`
     }
 
-    console.log('Sending request to OpenAI:', [systemMessage, ...messages])
+    const apiMessages: ChatCompletionMessageParam[] = [
+      systemMessage,
+      ...messages.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }))
+    ]
+
+    console.log('Sending request to OpenAI:', apiMessages)
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
-      messages: [systemMessage, ...messages],
+      messages: apiMessages,
       temperature: 0.7,
       max_tokens: 2000,
     })

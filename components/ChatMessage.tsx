@@ -10,11 +10,10 @@ interface ChatMessageProps {
   isLoading?: boolean
 }
 
-interface CodeProps {
-  node?: any
+interface CodeBlockProps {
   inline?: boolean
   className?: string
-  children?: React.ReactNode
+  children: React.ReactNode
 }
 
 interface ComponentProps {
@@ -44,35 +43,35 @@ const ChatMessage: FC<ChatMessageProps> = ({ role, content, isLoading }) => {
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[rehypeRaw, rehypeSanitize]}
               components={{
-                code({ node, inline, className, children, ...props }) {
+                code: ({ inline, className, children }: CodeBlockProps) => {
                   return !inline ? (
                     <pre className="bg-gray-800 text-gray-100 rounded-lg p-4 overflow-x-auto">
-                      <code className={className} {...props}>
+                      <code className={className}>
                         {children}
                       </code>
                     </pre>
                   ) : (
-                    <code className="bg-gray-100 text-gray-800 px-1 rounded" {...props}>
+                    <code className="bg-gray-100 text-gray-800 px-1 rounded">
                       {children}
                     </code>
                   )
                 },
-                pre({ children }) {
+                pre: ({ children }: ComponentProps) => {
                   return <div className="not-prose">{children}</div>
                 },
-                p({ children }) {
+                p: ({ children }: ComponentProps) => {
                   return <p className="mb-2 last:mb-0">{children}</p>
                 },
-                ul({ children }) {
+                ul: ({ children }: ComponentProps) => {
                   return <ul className="list-disc list-inside mb-2">{children}</ul>
                 },
-                ol({ children }) {
+                ol: ({ children }: ComponentProps) => {
                   return <ol className="list-decimal list-inside mb-2">{children}</ol>
                 },
-                li({ children }) {
+                li: ({ children }: ComponentProps) => {
                   return <li className="mb-1">{children}</li>
                 },
-                a({ href, children }) {
+                a: ({ href, children }: ComponentProps) => {
                   return (
                     <a
                       href={href}
